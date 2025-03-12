@@ -1,0 +1,20 @@
+node('master/slave'){
+    stage('ContinuosDownload'){
+        git 'Url of the Github where Developers are put the code'
+    }
+    stage('ContinuosBuild'){
+        sh 'mvn pacakge'
+    }
+    stage('ContinuosDeploy'){
+        sh 'sudo chmod o+w +R /var/lib/tomcat10/'
+             scp soucefile(srcfile) username@ipaddress:desination
+             sh 'scp path_where_artifact_is _created username@ip_of_address of QA server:/var/lib/tomcat/webapps/context_path.war'	
+    }
+    stage('ContinuosTesting'){
+        git 'url of the Github where the Tester have put the selenium code'
+                  sh 'java -jar selenium.jar'
+    }
+    stage('ContinuosDelivery'){
+        sh 'scp path_where_artifact_is _downloaded username@ip_of_address of Prod server:/var/lib/tomcat/webapps/context_path.war'	
+    }
+}

@@ -1,0 +1,68 @@
+pipeline{
+    agent any
+    stages{
+	    stage('continuosDownload'){
+	        steps{
+		        script{
+			        try{
+                       git 'Url of the Github where Developers are put the code'
+				    }
+				    catch (Exception as e){
+				       mail to intimate Git Admin to Unable to Download the Code From Github
+				    }
+				}
+	        }
+	    }
+	    stage('ContinuosBuld') {
+            steps{
+                script{
+			        try{
+                    sh 'mvn package'
+				    }
+				    catch (Exception as e1){
+				       mail to intimate Developers to Unable to Convert the Artifact from the Code
+				    }		   
+		        }
+            }				
+	    }
+	    stage('ContinuosDeploy') {
+            steps{
+		        script{
+			        try{
+		              sh 'sudo chmod o+w +R /var/lib/tomcat10/'
+                      scp soucefile(srcfile) username@ipaddress:desination
+                      sh 'scp path_where_artifact_is _created username@ip_of_address of QA server:/var/lib/tomcat10/webapps/contextpath.war'
+				    }
+				    catch (Exception as e2){
+				       mail to intimate Middle-ware Engineers to Unable to Deploy the Artifact to QA Server
+				}		  
+		      }	      
+	        }
+		} 
+	    stage('ContinuosTesting') {
+            steps{
+		        script{
+			        try{ 
+                       git 'url of the Github where the Tester have put the selenium code'
+                       sh 'java -jar selenium.jar'
+				    }
+				    catch (Exception as e3){
+				       mail to intimate the Tester to the failed the Jenkins in Testing check the selenium code
+				    }
+                }				
+		    }	      
+	     }
+	    stage('ContinuosDelivery') {
+            steps{
+		        script{
+			        try{
+                      sh 'scp path_where_artifact_is _downloaded username@ip_of_address of Prod server:/var/lib/tomcat10/webapps/contextpath.war'
+                    }					 
+		     	    catch (Exception as e4){
+				      mail to intimate the Delivery Team to the failed the Jenkins in deployment in to Prod Enviroment
+			 	    }
+                }				
+	        }
+		}
+    }
+}
