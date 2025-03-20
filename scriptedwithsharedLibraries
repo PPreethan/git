@@ -1,0 +1,26 @@
+@Library('mylibrary')_
+
+node('built-in')
+{
+    stage('ContinuosDownload')
+    {
+        cicd.GitDownload("maven")
+    }
+    stage('continuosBuild')
+    {
+        cicd.MavenBuild()
+    }
+    stage('ContinuosDeploy')
+    {
+        cicd.deploy("Declarative3","172.31.5.204","Testapp")
+    }
+    stage('ContinuosTesting')
+    {
+        cicd.GitDownload("FunctionalTesting")
+        cicd.RunSelenium("Declarative3")
+    }
+    stage("ContinuosDelivary")
+    {
+        cicd.deploy("Declarative3","172.31.10.122","Prodapp")
+    }
+}
