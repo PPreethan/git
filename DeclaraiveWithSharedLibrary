@@ -1,0 +1,60 @@
+@Library('mylibrary')_
+
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('ContinuosDownload')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.GitDownload("maven")
+                }
+            }
+        }
+        stage('continuosBuild')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.MavenBuild()
+                }
+            }
+        }
+        stage('ContinuosDeploy')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.deploy("Declarative3","172.31.5.204","Testapp")
+                }
+            }
+        }
+        stage('ContinuosTesting')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.GitDownload("FunctionalTesting")
+                    cicd.RunSelenium("Declarative3")
+                }
+            }
+        }
+        stage("ContinuosDelivary")
+        {
+            steps
+            {
+                script
+                {
+                    cicd.deploy("Declarative3","172.31.10.122","Prodapp")
+                }
+            }
+        }
+    }
+}
