@@ -1,0 +1,59 @@
+pipeline
+{
+    agent any
+    stages
+    {
+        stage("ContinuosDownload")
+        {
+            steps
+            {
+                script
+                {
+                    git 'https://github.com/IntelliqDevops/maven.git'
+                }
+            }
+        }
+        stage("ContinuosBuild")
+        {
+            steps
+            {
+                script
+                {
+                    sh 'mvn package'
+                }
+            }
+        }
+        stage("ContinuosDeploy")
+        {
+            steps
+            {
+                script
+                {
+                    sh 'scp  /var/lib/jenkins/workspace/Declarative/webapp/target/webapp.war ubuntu@172.31.5.204:/var/lib/tomcat10/webapps/testing.war'
+                }
+            }
+        }
+        stage("ContinuosTesting")
+        {
+            steps
+            {
+                script
+                {
+                    git 'https://github.com/IntelliqDevops/FunctionalTesting.git'
+                    sh 'java -jar /var/lib/jenkins/workspace/Declarative/testing.jar'
+                }
+            }
+        }
+         stage("ContinuosDelivary")
+        {
+            steps
+            {
+                script
+                {
+                    sh 'scp  /var/lib/jenkins/workspace/Declarative/webapp/target/webapp.war ubuntu@172.31.10.122:/var/lib/tomcat10/webapps/prod.war'
+                }
+            }
+        }
+
+    }
+}
