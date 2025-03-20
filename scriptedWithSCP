@@ -1,0 +1,24 @@
+node('built-in')
+{
+    stage("ContinuosDownload")
+    {
+        git 'https://github.com/IntelliqDevops/maven.git'
+    }
+    stage("ContinuosBuild")
+    {
+        sh 'mvn package'
+    }
+    stage("ContinuosDeploy")
+    {
+        sh 'scp /var/lib/jenkins/workspace/Declarative/webapp/target/webapp.war ubuntu@172.31.5.204:/var/lib/tomcat10/webapps/testing.war'
+    }
+    stage("ContinuosTesting")
+    {
+        git 'https://github.com/IntelliqDevops/FunctionalTesting.git'
+        sh 'java -jar /var/lib/jenkins/workspace/Declarative/testing.jar'
+    }
+    stage("ContinuosDelivary")
+    {
+        sh 'scp  /var/lib/jenkins/workspace/Declarative/webapp/target/webapp.war ubuntu@172.31.10.122:/var/lib/tomcat10/webapps/prod.war'
+    }
+}
