@@ -1,0 +1,29 @@
+@Library('mylibrary')_
+
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('ContinuosDownload_Master')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.GitDownload("maven")
+                }
+            }
+        }
+        stage('continuosBuild_Master')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.MavenBuild()
+                }
+            }
+        }
+    }
+}
