@@ -1,0 +1,39 @@
+@Library('mylibrary')_
+
+pipeline
+{
+    agent any
+    stages
+    {
+        stage('ContinuosDownload_Loans')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.GitDownload("maven")
+                }
+            }
+        }
+        stage('continuosBuild_Loans')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.MavenBuild()
+                }
+            }
+        }
+        stage('ContinuosDeploy_Loans')
+        {
+            steps
+            {
+                script
+                {
+                    cicd.deploy("Declarative3","172.31.5.204","Testapp")
+                }
+            }
+        }
+    }
+}
