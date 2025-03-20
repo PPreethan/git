@@ -25,36 +25,5 @@ pipeline
                 }
             }
         }
-        stage('ContinuosDeploy_Master')
-        {
-            steps
-            {
-                script
-                {
-                    cicd.deploy("Declarative3","172.31.5.204","Testapp")
-                }
-            }
-        }
-        stage('ContinuosTesting_Master')
-        {
-            steps
-            {
-                script
-                {
-                    cicd.GitDownload("FunctionalTesting")
-                    cicd.RunSelenium("Declarative3")
-                }
-            }
-        }
-        stage("ContinuosDelivary_Master")
-        {
-            steps
-            {
-                script
-                {
-                    cicd.deploy("Declarative3","172.31.10.122","Prodapp")
-                }
-            }
-        }
     }
 }
